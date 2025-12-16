@@ -6,10 +6,11 @@
     <title>P!X - Sistem Bioskop</title>
     <link rel="stylesheet" href="assets/style.css">
     <style>
-        /* Dropdown Menu Styles - WORKING VERSION */
+        /* DROPDOWN OVERRIDE - FINAL FIX */
         .nav-dropdown {
             position: relative;
             display: inline-block;
+            z-index: 1000;
         }
         
         .nav-dropdown-btn {
@@ -25,20 +26,14 @@
             border: none;
             font-size: 14px;
             font-weight: 600;
-            white-space: nowrap;
         }
         
         .nav-dropdown-btn:hover {
             background: rgba(255,255,255,0.25);
         }
         
-        .nav-dropdown.show .nav-dropdown-btn {
-            background: rgba(255,255,255,0.25);
-        }
-        
         .dropdown-arrow {
             transition: transform 0.3s;
-            display: inline-block;
         }
         
         .nav-dropdown.show .dropdown-arrow {
@@ -55,23 +50,11 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             border-radius: 10px;
             overflow: hidden;
-            z-index: 99999;
+            z-index: 10000;
         }
         
         .nav-dropdown.show .nav-dropdown-menu {
             display: block;
-            animation: slideDown 0.3s ease;
-        }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         .dropdown-menu-header {
@@ -83,13 +66,11 @@
         .dropdown-menu-header h4 {
             margin: 0 0 5px 0;
             font-size: 16px;
-            font-weight: 600;
         }
         
         .dropdown-menu-header p {
             margin: 0;
             font-size: 13px;
-            opacity: 0.9;
         }
         
         .dropdown-menu-item {
@@ -97,14 +78,10 @@
             padding: 15px 20px;
             color: #032541;
             text-decoration: none;
-            transition: all 0.2s;
             border-bottom: 1px solid #f0f0f0;
             font-size: 14px;
             font-weight: 500;
-        }
-        
-        .dropdown-menu-item:last-child {
-            border-bottom: none;
+            transition: all 0.2s;
         }
         
         .dropdown-menu-item:hover {
@@ -123,12 +100,6 @@
             color: #c82333;
         }
         
-        .dropdown-menu-item svg {
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-        
-        /* Overlay */
         .dropdown-overlay {
             display: none;
             position: fixed;
@@ -136,7 +107,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            z-index: 99998;
+            z-index: 999;
             background: transparent;
         }
         
@@ -160,17 +131,67 @@
                 
                 if(isset($_SESSION['admin_id'])):
                 ?>
-                    <a href="index.php?module=film">🎬 Film</a>
-                    <a href="index.php?module=bioskop">🏢 Bioskop</a>
-                    <a href="index.php?module=jadwal">📅 Jadwal</a>
+                    <a href="index.php?module=film">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                            <line x1="7" y1="2" x2="7" y2="22"/>
+                            <line x1="17" y1="2" x2="17" y2="22"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <line x1="2" y1="7" x2="7" y2="7"/>
+                            <line x1="2" y1="17" x2="7" y2="17"/>
+                            <line x1="17" y1="17" x2="22" y2="17"/>
+                            <line x1="17" y1="7" x2="22" y2="7"/>
+                        </svg>
+                        Film
+                    </a>
+                    <a href="index.php?module=bioskop">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        Bioskop
+                    </a>
+                    <a href="index.php?module=jadwal">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <rect x="3" y="4" width="18" height="18" rx="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Jadwal
+                    </a>
                 <?php 
                 elseif(isset($_SESSION['user_id'])):
                 ?>
-                    <a href="index.php?module=film">🎬 Film</a>
+                    <a href="index.php?module=film">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                            <line x1="7" y1="2" x2="7" y2="22"/>
+                            <line x1="17" y1="2" x2="17" y2="22"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <line x1="2" y1="7" x2="7" y2="7"/>
+                            <line x1="2" y1="17" x2="7" y2="17"/>
+                            <line x1="17" y1="17" x2="22" y2="17"/>
+                            <line x1="17" y1="7" x2="22" y2="7"/>
+                        </svg>
+                        Film
+                    </a>
                 <?php 
                 else:
                 ?>
-                    <a href="index.php?module=film">🎬 Film</a>
+                    <a href="index.php?module=film">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                            <line x1="7" y1="2" x2="7" y2="22"/>
+                            <line x1="17" y1="2" x2="17" y2="22"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <line x1="2" y1="7" x2="7" y2="7"/>
+                            <line x1="2" y1="17" x2="7" y2="17"/>
+                            <line x1="17" y1="17" x2="22" y2="17"/>
+                            <line x1="17" y1="7" x2="22" y2="7"/>
+                        </svg>
+                        Film
+                    </a>
                 <?php endif; ?>
             </div>
             
@@ -330,7 +351,7 @@ if(isset($_GET['error'])) {
     setTimeout(function(){ t.classList.add('show'); }, 50);
 })();
 
-// Dropdown Toggle - SIMPLE & WORKING
+// Dropdown Toggle - SIMPLE FIX
 function toggleDropdown(id) {
     const dropdown = document.getElementById(id);
     const overlay = document.getElementById('dropdownOverlay');
@@ -344,7 +365,9 @@ function toggleDropdown(id) {
     });
     
     // Toggle current dropdown
-    if (dropdown.classList.contains('show')) {
+    const isShowing = dropdown.classList.contains('show');
+    
+    if (isShowing) {
         dropdown.classList.remove('show');
         overlay.classList.remove('show');
     } else {
@@ -357,12 +380,14 @@ function toggleDropdown(id) {
 document.addEventListener('DOMContentLoaded', function() {
     const overlay = document.getElementById('dropdownOverlay');
     
-    overlay.addEventListener('click', function() {
-        document.querySelectorAll('.nav-dropdown').forEach(d => {
-            d.classList.remove('show');
+    if (overlay) {
+        overlay.addEventListener('click', function() {
+            document.querySelectorAll('.nav-dropdown').forEach(d => {
+                d.classList.remove('show');
+            });
+            overlay.classList.remove('show');
         });
-        overlay.classList.remove('show');
-    });
+    }
     
     // Close on ESC key
     document.addEventListener('keydown', function(e) {
@@ -370,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.nav-dropdown').forEach(d => {
                 d.classList.remove('show');
             });
-            overlay.classList.remove('show');
+            if (overlay) overlay.classList.remove('show');
         }
     });
 });

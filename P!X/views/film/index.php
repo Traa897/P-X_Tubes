@@ -1,23 +1,16 @@
 <?php require_once 'views/layouts/header.php'; ?>
 
-<div style="background: linear-gradient(rgba(13, 37, 63, 0.8), rgba(13, 37, 63, 0.8)), url('assets/bakcground film/Belakang-Kiri-1024x576.jpg') center/cover; padding: 100px 20px; color: white; position: relative;">
-    <div style="max-width: 1400px; margin: 0 auto; padding: 0 20px;">
-        <h1 style="font-size: 52px; margin: 0 0 15px 0; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 12px;">
-                <rect x="2" y="7" width="20" height="15" rx="2"/>
-                <polyline points="17 2 12 7 7 2"/>
-            </svg>
-            Daftar Film
-        </h1>
-        <p style="font-size: 22px; margin: 0 0 40px 0; opacity: 0.95; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Koleksi Film Terbaik Indonesia</p>
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>Daftar Film</h1>
+        <p>Koleksi Film Terbaik Indonesia</p>
         
-        <form method="GET" action="index.php" style="max-width: 700px; display: flex; gap: 0; background: white; border-radius: 50px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <form method="GET" action="index.php" class="hero-search">
             <input type="hidden" name="module" value="film">
             <input type="text" name="search" placeholder="Cari film berdasarkan judul..." 
-                   value="<?php echo htmlspecialchars($search ?? ''); ?>"
-                   style="flex: 1; padding: 18px 30px; border: none; font-size: 16px; outline: none; color: #333;">
-            <button type="submit" style="padding: 18px 40px; background: linear-gradient(135deg, #0d95a6, #14b8c9); color: white; border: none; font-weight: 600; cursor: pointer; font-size: 16px; transition: all 0.3s;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
+                   value="<?php echo htmlspecialchars($search ?? ''); ?>">
+            <button type="submit" class="btn-search">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"/>
                     <path d="m21 21-4.35-4.35"/>
                 </svg>
@@ -26,7 +19,7 @@
     </div>
 </div>
 
-<div class="container" style="max-width: 1400px; margin: 0 auto; padding: 50px 20px;">
+<div class="container">
     
     <div style="margin-bottom: 30px;">
         <h2 style="font-size: 28px; color: #032541; margin: 0;">
@@ -92,9 +85,19 @@
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 $isPresale = false;
+                $statusBadge = '';
+                $statusColor = '';
+                
                 if($result && $result['nearest_date']) {
                     $selisihHari = floor((strtotime($result['nearest_date']) - strtotime($today)) / 86400);
-                    $isPresale = ($selisihHari > 7);
+                    
+                    // Hanya tampilkan badge untuk PRE-SALE (lebih dari 7 hari)
+                    if($selisihHari > 7) {
+                        $isPresale = true;
+                        $statusBadge = 'PRE-SALE';
+                        $statusColor = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                    }
+                    // Film yang tayang hari ini atau < 7 hari tidak ada badge
                 }
                 ?>
                 <div style="flex-shrink: 0; width: 180px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
@@ -103,12 +106,14 @@
                              alt="<?php echo htmlspecialchars($film['judul_film']); ?>"
                              style="width: 100%; height: 260px; object-fit: cover; display: block;">
                         
-                        <?php if($isPresale): ?>
-                        <div style="position: absolute; top: 8px; left: 8px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); text-transform: uppercase; letter-spacing: 0.5px;">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 2px;">
+                        <?php if($statusBadge): ?>
+                        <div style="position: absolute; top: 8px; left: 8px; background: <?php echo $statusColor; ?>; color: white; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); text-transform: uppercase; letter-spacing: 0.5px;">
+                            <?php if($isPresale): ?>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 2px;">
                                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
                             </svg>
-                            PRE-SALE
+                            <?php endif; ?>
+                            <?php echo $statusBadge; ?>
                         </div>
                         <?php endif; ?>
                         

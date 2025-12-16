@@ -32,8 +32,14 @@
         <div class="stat-card">
             <div class="stat-icon">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="7" width="20" height="15" rx="2"/>
-                    <polyline points="17 2 12 7 7 2"/>
+                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                    <line x1="7" y1="2" x2="7" y2="22"/>
+                    <line x1="17" y1="2" x2="17" y2="22"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <line x1="2" y1="7" x2="7" y2="7"/>
+                    <line x1="2" y1="17" x2="7" y2="17"/>
+                    <line x1="17" y1="17" x2="22" y2="17"/>
+                    <line x1="17" y1="7" x2="22" y2="7"/>
                 </svg>
             </div>
             <div class="stat-info">
@@ -151,6 +157,21 @@
                     <div class="movie-poster-scroll">
                         <img src="<?php echo htmlspecialchars($film['poster_url'] ?? 'https://via.placeholder.com/150x225'); ?>" 
                              alt="<?php echo htmlspecialchars($film['judul_film']); ?>">
+                        
+                        <!-- Icon Film Reel di pojok kanan atas -->
+                        <div style="position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; background: rgba(220, 53, 69, 0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                                <line x1="7" y1="2" x2="7" y2="22"/>
+                                <line x1="17" y1="2" x2="17" y2="22"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <line x1="2" y1="7" x2="7" y2="7"/>
+                                <line x1="2" y1="17" x2="7" y2="17"/>
+                                <line x1="17" y1="17" x2="22" y2="17"/>
+                                <line x1="17" y1="7" x2="22" y2="7"/>
+                            </svg>
+                        </div>
+                        
                         <div class="rating-badge">
                             <span class="rating-circle">
                                 <svg viewBox="0 0 36 36">

@@ -1,5 +1,5 @@
 <?php
-// controllers/FilmController.php - FIXED dengan Validator
+// controllers/FilmController.php - UPDATED untuk Admin melihat film dengan jadwal saja
 
 require_once 'config/database.php';
 require_once 'models/BaseModel.php';
@@ -26,8 +26,7 @@ class FilmController {
         $genre_filter = isset($_GET['genre']) ? $_GET['genre'] : '';
         $status_filter = isset($_GET['status']) ? $_GET['status'] : '';
         
-        $isAdmin = isset($_SESSION['admin_id']);
-
+        // PERBAIKAN: Semua role (admin, user, public) hanya lihat film dengan jadwal aktif
         if($status_filter != '') {
             switch($status_filter) {
                 case 'akan_tayang':
@@ -37,14 +36,14 @@ class FilmController {
                     $stmt = $this->film->readSedangTayang();
                     break;
                 default:
-                    $stmt = $isAdmin ? $this->film->readAllIncludingNoSchedule() : $this->film->readAll();
+                    $stmt = $this->film->readAll(); // Hanya film dengan jadwal aktif
             }
         } elseif($search != '') {
-            $stmt = $isAdmin ? $this->film->searchAllFilms($search) : $this->film->search($search);
+            $stmt = $this->film->search($search); // Search hanya film dengan jadwal
         } elseif($genre_filter != '') {
-            $stmt = $isAdmin ? $this->film->readByGenreAll($genre_filter) : $this->film->readByGenre($genre_filter);
+            $stmt = $this->film->readByGenre($genre_filter); // Filter genre hanya film dengan jadwal
         } else {
-            $stmt = $isAdmin ? $this->film->readAllIncludingNoSchedule() : $this->film->readAll();
+            $stmt = $this->film->readAll(); // Default: hanya film dengan jadwal aktif
         }
 
         $films = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -63,6 +62,7 @@ class FilmController {
         
         $films = $uniqueFilms;
         
+        // Add status to each film
         foreach($films as $key => &$film) {
             $status = $this->film->getFilmStatus($film['id_film']);
             $film['status'] = $status;
