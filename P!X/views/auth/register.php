@@ -2,7 +2,7 @@
 
 <div class="container" style="max-width: 600px; margin-top: 50px;">
     <div class="form-container">
-        <h2 style="text-align: center; margin-bottom: 30px;">📝 Daftar Akun Baru</h2>
+        <h2 style="text-align: center; margin-bottom: 30px;">Daftar Akun Baru</h2>
 
         <?php if(isset($error)): ?>
             <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>

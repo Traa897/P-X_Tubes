@@ -203,7 +203,7 @@
         <div style="display: grid; gap: 15px;">
             <?php foreach($recentTransactions as $trans): ?>
                 <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center;">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    <div style="width: 60px; height: 60px; background: #3B8FB8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 7h-3a2 2 0 0 1-2-2V2"/>
                             <rect x="3" y="2" width="14" height="20" rx="2"/>

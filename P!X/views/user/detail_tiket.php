@@ -7,8 +7,8 @@ $firstTicket = $tickets[0] ?? null;
 
 <div class="container">
     <div class="header-section">
-        <h1>🎫 Detail Tiket</h1>
-        <a href="index.php?module=user&action=riwayat" class="btn btn-secondary">⬅️ Kembali</a>
+        <h1>Detail Tiket</h1>
+        <a href="index.php?module=user&action=riwayat" class="btn btn-secondary">Kembali</a>
     </div>
 
     <div class="detail-container" style="grid-template-columns: 1fr;">
@@ -39,7 +39,7 @@ $firstTicket = $tickets[0] ?? null;
             <?php if($firstTicket): ?>
             <!-- Detail Film & Bioskop -->
             <div style="margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
-                <h3 style="margin: 0 0 15px 0; color: #032541;">🎬 Informasi Film & Bioskop</h3>
+                <h3 style="margin: 0 0 15px 0; color: #032541;">Informasi Film & Bioskop</h3>
                 
                 <div style="display: grid; gap: 10px;">
                     <p style="margin: 0;"><strong>Film:</strong> <?php echo htmlspecialchars($firstTicket['judul_film']); ?></p>
@@ -55,7 +55,7 @@ $firstTicket = $tickets[0] ?? null;
 
             <!-- Detail Tiket -->
             <div style="margin-bottom: 30px;">
-                <h3 style="margin: 0 0 15px 0; color: #032541;">🎫 Detail Tiket</h3>
+                <h3 style="margin: 0 0 15px 0; color: #032541;">Detail Tiket</h3>
                 <div style="display: grid; gap: 10px;">
                     <?php foreach($tickets as $index => $ticket): ?>
                     <div style="padding: 15px; background: white; border-radius: 8px; border: 2px solid #01b4e4; display: flex; justify-content: space-between; align-items: center;">
@@ -76,7 +76,7 @@ $firstTicket = $tickets[0] ?? null;
 
             <!-- Ringkasan Pembayaran -->
             <div style="padding: 20px; background: #f8f9fa; border-radius: 10px; margin-bottom: 30px;">
-                <h3 style="margin: 0 0 15px 0; color: #032541;">💰 Ringkasan Pembayaran</h3>
+                <h3 style="margin: 0 0 15px 0; color: #032541;"> Ringkasan Pembayaran</h3>
                 <table style="width: 100%;">
                     <tr>
                         <td style="padding: 5px 0;">Jumlah Tiket:</td>
@@ -107,7 +107,7 @@ $firstTicket = $tickets[0] ?? null;
 
             <div class="detail-actions">
                 <button onclick="window.print()" class="btn btn-info">🖨️ Cetak Tiket</button>
-                <a href="index.php?module=user&action=riwayat" class="btn btn-secondary">📋 Kembali</a>
+                <a href="index.php?module=user&action=riwayat" class="btn btn-secondary">Kembali</a>
             </div>
         </div>
     </div>

@@ -74,8 +74,8 @@ require_once 'views/layouts/header.php'; ?>
     <?php else: ?>
         <div style="display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: thin;">
             <?php foreach($films as $film): ?>
-               <?php
-                // PERBAIKAN: Cek status film dengan logika yang BENAR
+                <?php
+                // CEK STATUS FILM - HANYA PRESALE YANG DITAMPILKAN
                 $today = date('Y-m-d');
                 $query = "SELECT MIN(tanggal_tayang) as nearest_date 
                          FROM Jadwal_Tayang 
@@ -87,32 +87,9 @@ require_once 'views/layouts/header.php'; ?>
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 $isPresale = false;
-                $isRegular = false;
-                $isToday = false;
-                $statusBadge = '';
-                $statusColor = '';
-                
                 if($result && $result['nearest_date']) {
                     $selisihHari = floor((strtotime($result['nearest_date']) - strtotime($today)) / 86400);
-                    
-                    // PERBAIKAN: Logika yang BENAR
-                    // 0 hari = Hari Ini
-                    // 1-6 hari = Reguler (AKAN TAYANG)
-                    // 7+ hari = Presale
-                    
-                    if($selisihHari == 0) {
-                        $isToday = true;
-                        $statusBadge = 'HARI INI';
-                        $statusColor = 'linear-gradient(135deg, #0281AA, #0d72bbff)';
-                    } elseif($selisihHari >= 1 && $selisihHari < 7) {
-                        $isRegular = true;
-                        $statusBadge = 'AKAN TAYANG';
-                        $statusColor = 'linear-gradient(135deg, #3b82f6, #2563eb)';
-                    } elseif($selisihHari >= 7) {
-                        $isPresale = true;
-                        $statusBadge = 'PRE-SALE';
-                        $statusColor = 'linear-gradient(135deg, #f59e0b, #d97706)';
-                    }
+                    $isPresale = ($selisihHari >= 7); // Presale = 7+ hari
                 }
                 ?>
                 <div style="flex-shrink: 0; width: 180px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">
@@ -121,18 +98,13 @@ require_once 'views/layouts/header.php'; ?>
                              alt="<?php echo htmlspecialchars($film['judul_film']); ?>"
                              style="width: 100%; height: 260px; object-fit: cover; display: block;">
                         
-                        <?php if($statusBadge): ?>
-                        <div style="position: absolute; top: 8px; left: 8px; background: <?php echo $statusColor; ?>; color: white; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); text-transform: uppercase; letter-spacing: 0.5px;">
-                            <?php if($isPresale): ?>
+                        <!-- HANYA PRESALE BADGE YANG DITAMPILKAN -->
+                        <?php if($isPresale): ?>
+                        <div style="position: absolute; top: 8px; left: 8px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.3); text-transform: uppercase; letter-spacing: 0.5px;">
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 2px;">
                                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
                             </svg>
-                            <?php elseif($isToday): ?>
-                            🔥
-                            <?php else: ?>
-                            📅
-                            <?php endif; ?>
-                            <?php echo $statusBadge; ?>
+                            PRE-SALE
                         </div>
                         <?php endif; ?>
                         
