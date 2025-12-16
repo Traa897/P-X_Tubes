@@ -147,10 +147,10 @@ class JadwalValidator extends BaseValidator {
         $id_film = $this->data['id_film'];
         $tanggal_tayang = $this->data['tanggal_tayang'];
         
-        // Cek pre-sale
+        // PERBAIKAN: Cek pre-sale dengan definisi yang benar (7+ hari)
         $query = "SELECT COUNT(*) as count FROM Jadwal_Tayang 
                   WHERE id_film = :id_film 
-                  AND DATEDIFF(tanggal_tayang, CURDATE()) > 7";
+                  AND DATEDIFF(tanggal_tayang, CURDATE()) >= 7"; // Pre-sale = 7+ hari
         
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':id_film', $id_film);
@@ -158,11 +158,13 @@ class JadwalValidator extends BaseValidator {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($result['count'] > 0) {
+            // Ada jadwal pre-sale (7+ hari)
             $today = date('Y-m-d');
             $selisihHari = floor((strtotime($tanggal_tayang) - strtotime($today)) / 86400);
             
-            if ($selisihHari <= 7) {
-                $this->addError('tanggal_tayang', 'Film ini sudah memiliki jadwal pre-sale (>7 hari). Tidak bisa menambah jadwal dalam 7 hari ke depan!');
+            // PERBAIKAN: Kalau jadwal baru < 7 hari, dan ada presale existing, tolak
+            if ($selisihHari < 7) {
+                $this->addError('tanggal_tayang', 'Film ini sudah memiliki jadwal pre-sale (7+ hari ke depan). Tidak bisa menambah jadwal dalam 7 hari ke depan!');
             }
         }
     }

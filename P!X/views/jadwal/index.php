@@ -13,7 +13,10 @@ require_once 'views/layouts/header.php';
 <div class="container">
     <?php if(isset($_SESSION['flash'])): ?>
         <div class="alert alert-success">
-            ✅ <?php echo htmlspecialchars($_SESSION['flash']); unset($_SESSION['flash']); ?>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <?php echo htmlspecialchars($_SESSION['flash']); unset($_SESSION['flash']); ?>
         </div>
     <?php endif; ?>
 
@@ -32,13 +35,28 @@ require_once 'views/layouts/header.php';
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
                 <div class="form-group" style="margin: 0;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #032541;">📅 Tanggal:</label>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #032541; display: flex; align-items: center; gap: 5px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Tanggal:
+                    </label>
                     <input type="date" name="date" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px;" 
                            value="<?php echo isset($_GET['date']) ? htmlspecialchars($_GET['date']) : ''; ?>">
                 </div>
 
                 <div class="form-group" style="margin: 0;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #032541;">🎬 Film:</label>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #032541; display: flex; align-items: center; gap: 5px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <path d="M2 8h20"/>
+                            <path d="M6 16h4"/>
+                        </svg>
+                        Film:
+                    </label>
                     <select name="film" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px;">
                         <option value="">Semua Film</option>
                         <?php foreach($films as $film): ?>
@@ -51,7 +69,13 @@ require_once 'views/layouts/header.php';
                 </div>
 
                 <div class="form-group" style="margin: 0;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #032541;">🏢 Bioskop:</label>
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #032541; display: flex; align-items: center; gap: 5px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        Bioskop:
+                    </label>
                     <select name="bioskop" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px;">
                         <option value="">Semua Bioskop</option>
                         <?php foreach($bioskops as $bioskop): ?>
@@ -77,8 +101,14 @@ require_once 'views/layouts/header.php';
         <strong style="color: #032541;">Filter Aktif:</strong>
         
         <?php if(isset($_GET['date']) && $_GET['date'] != ''): ?>
-        <span style="padding: 5px 15px; background: #01b4e4; color: white; border-radius: 20px; font-size: 14px;">
-            📅 <?php echo date('d F Y', strtotime($_GET['date'])); ?>
+        <span style="padding: 5px 15px; background: #01b4e4; color: white; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 5px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <?php echo date('d F Y', strtotime($_GET['date'])); ?>
         </span>
         <?php endif; ?>
         
@@ -87,8 +117,13 @@ require_once 'views/layouts/header.php';
         $selectedFilm = array_filter($films, function($f) { return $f['id_film'] == $_GET['film']; });
         $selectedFilm = reset($selectedFilm);
         ?>
-        <span style="padding: 5px 15px; background: #764ba2; color: white; border-radius: 20px; font-size: 14px;">
-            🎬 <?php echo htmlspecialchars($selectedFilm['judul_film'] ?? 'Film'); ?>
+        <span style="padding: 5px 15px; background: #764ba2; color: white; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 5px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="M2 8h20"/>
+                <path d="M6 16h4"/>
+            </svg>
+            <?php echo htmlspecialchars($selectedFilm['judul_film'] ?? 'Film'); ?>
         </span>
         <?php endif; ?>
         
@@ -97,8 +132,12 @@ require_once 'views/layouts/header.php';
         $selectedBioskop = array_filter($bioskops, function($b) { return $b['id_bioskop'] == $_GET['bioskop']; });
         $selectedBioskop = reset($selectedBioskop);
         ?>
-        <span style="padding: 5px 15px; background: #f5576c; color: white; border-radius: 20px; font-size: 14px;">
-            🏢 <?php echo htmlspecialchars($selectedBioskop['nama_bioskop'] ?? 'Bioskop'); ?>
+        <span style="padding: 5px 15px; background: #f5576c; color: white; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 5px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <?php echo htmlspecialchars($selectedBioskop['nama_bioskop'] ?? 'Bioskop'); ?>
         </span>
         <?php endif; ?>
     </div>
@@ -107,23 +146,30 @@ require_once 'views/layouts/header.php';
     <!-- Empty State -->
     <?php if(empty($jadwals)): ?>
         <div style="background: white; padding: 60px 40px; border-radius: 15px; text-align: center; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
-            <div style="font-size: 80px; margin-bottom: 20px; opacity: 0.3;">📅</div>
+            <div style="font-size: 80px; margin-bottom: 20px; opacity: 0.3;">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+            </div>
             
             <?php if(isset($_GET['date']) || isset($_GET['film']) || isset($_GET['bioskop'])): ?>
-                <h2 style="margin: 0 0 15px 0; color: #032541;">❌ Tidak Ada Jadwal Ditemukan</h2>
+                <h2 style="margin: 0 0 15px 0; color: #032541;">Tidak Ada Jadwal Ditemukan</h2>
                 <p style="margin: 0 0 30px 0; color: #666;">
                     Tidak ada jadwal yang sesuai dengan filter yang Anda pilih.<br>
                     Coba ubah atau hapus filter untuk melihat jadwal lainnya.
                 </p>
                 
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                    <a href="index.php?module=jadwal" class="btn btn-primary"> Lihat Semua Jadwal</a>
+                    <a href="index.php?module=jadwal" class="btn btn-primary">Lihat Semua Jadwal</a>
                     <?php if(isset($_SESSION['admin_id'])): ?>
-                        <a href="index.php?module=jadwal&action=create" class="btn btn-info"> Tambah Jadwal</a>
+                        <a href="index.php?module=jadwal&action=create" class="btn btn-info">Tambah Jadwal</a>
                     <?php endif; ?>
                 </div>
             <?php else: ?>
-                <h2 style="margin: 0 0 15px 0; color: #032541;"> Belum Ada Jadwal Tayang</h2>
+                <h2 style="margin: 0 0 15px 0; color: #032541;">Belum Ada Jadwal Tayang</h2>
                 <p style="margin: 0 0 30px 0; color: #666;">
                     Saat ini belum ada jadwal tayang yang tersedia di sistem.
                 </p>
@@ -131,7 +177,7 @@ require_once 'views/layouts/header.php';
                 <?php if(isset($_SESSION['admin_id'])): ?>
                     <a href="index.php?module=jadwal&action=create" class="btn btn-primary">Tambah</a>
                 <?php else: ?>
-                    <a href="index.php?module=film" class="btn btn-primary"> Lihat Daftar Film</a>
+                    <a href="index.php?module=film" class="btn btn-primary">Lihat Daftar Film</a>
                 <?php endif; ?>
             <?php endif; ?>
         </div>
@@ -167,17 +213,17 @@ require_once 'views/layouts/header.php';
                         </h3>
                         <p style="margin: 5px 0; color: #666; font-size: 16px; display: flex; align-items: center; gap: 6px;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                                <polyline points="9 22 9 12 15 12 15 22"/>
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
                             </svg>
                             <?php echo htmlspecialchars($jadwal['nama_bioskop']); ?> - <?php echo htmlspecialchars($jadwal['kota']); ?>
                         </p>
                         <?php if(!empty($jadwal['nama_tayang'])): ?>
                             <p style="margin: 5px 0; color: #01b4e4; font-weight: 600; display: flex; align-items: center; gap: 6px;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 7h-3a2 2 0 0 1-2-2V2"/>
-                                    <rect x="3" y="2" width="14" height="20" rx="2"/>
-                                    <path d="M7 10h6M7 14h6M7 18h3"/>
+                                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                    <path d="M2 8h20"/>
+                                    <path d="M6 16h4"/>
                                 </svg>
                                 <?php echo htmlspecialchars($jadwal['nama_tayang']); ?>
                             </p>
@@ -196,19 +242,19 @@ require_once 'views/layouts/header.php';
                         <?php if(isset($_SESSION['user_id'])): ?>
                             <a href="index.php?module=transaksi&action=booking&id_jadwal=<?php echo $jadwal['id_tayang']; ?>" 
                                class="btn btn-primary" style="text-align: center; padding: 10px 20px;">
-                                x`Booking
+                                Booking
                             </a>
                         <?php endif; ?>
                         
                         <?php if(isset($_SESSION['admin_id'])): ?>
                             <a href="index.php?module=jadwal&action=edit&id=<?php echo $jadwal['id_tayang']; ?>" 
                                class="btn btn-warning" style="text-align: center; padding: 8px 15px;">
-                                 Edit
+                                Edit
                             </a>
                             <a href="index.php?module=jadwal&action=delete&id=<?php echo $jadwal['id_tayang']; ?>" 
                                class="btn btn-danger" style="text-align: center; padding: 8px 15px;"
                                onclick="return confirm('Hapus jadwal ini?')">
-                                 Hapus
+                                Hapus
                             </a>
                         <?php endif; ?>
                     </div>

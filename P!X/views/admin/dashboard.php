@@ -3,10 +3,6 @@
 <div class="container">
     <div class="header-section">
         <h1>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>
-            </svg>
             Dashboard Admin
         </h1>
         <div style="display: flex; gap: 10px;">
@@ -120,23 +116,9 @@
     <!-- Film Tanpa Jadwal -->
     <div class="section-header" style="margin-top: 40px;">
         <h2>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 8px;">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            Film Belum Ada Jadwal Aktif
+           FILM BELUM ADA JADWAL TAYANG
         </h2>
-        <div style="display: flex; gap: 10px;">
-            <a href="index.php?module=admin&action=cleanExpiredFilms" class="btn btn-warning" 
-               onclick="return confirm('Hapus semua film yang jadwalnya sudah lewat?')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
-                    <polyline points="3 6 5 6 21 6"/>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                </svg>
-                Bersihkan Film Kadaluarsa
-            </a>
-        </div>
+      
     </div>
 
     <?php

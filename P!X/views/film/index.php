@@ -1,9 +1,10 @@
-<?php require_once 'views/layouts/header.php'; ?>
+<?php 
+require_once 'views/layouts/header.php'; ?>
 
 <div class="hero-section">
     <div class="hero-content">
         <h1>Daftar Film</h1>
-        <p>Koleksi Film Terbaik Indonesia</p>
+        <p>Selamat datang, Jangan Lupa Nonton </p>
         
         <form method="GET" action="index.php" class="hero-search">
             <input type="hidden" name="module" value="film">
@@ -25,19 +26,18 @@
         <h2 style="font-size: 28px; color: #032541; margin: 0;">
             <?php 
             if($status_filter == 'akan_tayang') {
-                echo 'Film Akan Tayang (Pre-Sale)';
+                echo 'Film Akan Tayang';
             } elseif($status_filter == 'sedang_tayang') {
                 echo 'Film Sedang Tayang';
-            } else {
-                echo 'Semua Film';
-            }
+          
+            } 
             ?> 
-            (<?php echo count($films); ?>)
+           
         </h2>
     </div>
 
     <div style="margin-bottom: 40px;">
-        <h3 style="font-size: 20px; color: #032541; margin: 0 0 15px 0;">Filter by Genre</h3>
+    
         <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin;">
             <a href="index.php?module=film" 
                style="flex-shrink: 0; padding: 12px 24px; background: <?php echo empty($genre_filter) ? 'linear-gradient(135deg, #0d7377, #14a1a6)' : '#6c757d'; ?>; color: white; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s; white-space: nowrap;">
@@ -75,24 +75,40 @@
         <div style="display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: thin;">
             <?php foreach($films as $film): ?>
                <?php
-                // Cek status film
+                // PERBAIKAN: Cek status film dengan logika yang BENAR
                 $today = date('Y-m-d');
-                $query = "SELECT MIN(tanggal_tayang) as nearest_date FROM Jadwal_Tayang WHERE id_film = :id_film AND tanggal_tayang >= :today";
+                $query = "SELECT MIN(tanggal_tayang) as nearest_date 
+                         FROM Jadwal_Tayang 
+                         WHERE id_film = :id_film 
+                         AND CONCAT(tanggal_tayang, ' ', jam_selesai) >= NOW()";
                 $stmt = $this->db->prepare($query);
                 $stmt->bindParam(':id_film', $film['id_film']);
-                $stmt->bindParam(':today', $today);
                 $stmt->execute();
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 $isPresale = false;
+                $isRegular = false;
+                $isToday = false;
                 $statusBadge = '';
                 $statusColor = '';
                 
                 if($result && $result['nearest_date']) {
                     $selisihHari = floor((strtotime($result['nearest_date']) - strtotime($today)) / 86400);
                     
-                    // PERBAIKAN: Tampilkan badge untuk PRE-SALE (lebih dari 1 hari)
-                    if($selisihHari > 1) {
+                    // PERBAIKAN: Logika yang BENAR
+                    // 0 hari = Hari Ini
+                    // 1-6 hari = Reguler (AKAN TAYANG)
+                    // 7+ hari = Presale
+                    
+                    if($selisihHari == 0) {
+                        $isToday = true;
+                        $statusBadge = 'HARI INI';
+                        $statusColor = 'linear-gradient(135deg, #0281AA, #0d72bbff)';
+                    } elseif($selisihHari >= 1 && $selisihHari < 7) {
+                        $isRegular = true;
+                        $statusBadge = 'AKAN TAYANG';
+                        $statusColor = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+                    } elseif($selisihHari >= 7) {
                         $isPresale = true;
                         $statusBadge = 'PRE-SALE';
                         $statusColor = 'linear-gradient(135deg, #f59e0b, #d97706)';
@@ -111,6 +127,10 @@
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 2px;">
                                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
                             </svg>
+                            <?php elseif($isToday): ?>
+                            🔥
+                            <?php else: ?>
+                            📅
                             <?php endif; ?>
                             <?php echo $statusBadge; ?>
                         </div>

@@ -1,5 +1,5 @@
 <?php
-// models/Film.php - COMPLETE VERSION
+// models/Film.php - COMPLETE VERSION WITH FIXED PRESALE LOGIC
 require_once 'models/BaseModel.php';
 
 class Film extends BaseModel {
@@ -109,11 +109,24 @@ class Film extends BaseModel {
         return $stmt;
     }
 
+    // PERBAIKAN: Get film status dengan logika presale yang benar
     public function getFilmStatus($id_film) {
+        // Cek ada jadwal atau tidak
+        $query = "SELECT COUNT(*) as count FROM Jadwal_Tayang WHERE id_film = :id_film";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id_film', $id_film);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if($result['count'] == 0) {
+            return null; // Tidak ada jadwal
+        }
+        
+        // Cek sedang tayang (hari ini dan belum selesai)
         $query = "SELECT COUNT(*) as count FROM Jadwal_Tayang 
                   WHERE id_film = :id_film 
                   AND CONCAT(tanggal_tayang, ' ', jam_selesai) >= NOW()
-                  AND tanggal_tayang <= CURDATE()";
+                  AND tanggal_tayang = CURDATE()";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_film', $id_film);
@@ -124,9 +137,11 @@ class Film extends BaseModel {
             return 'Sedang Tayang';
         }
         
+        // Cek akan tayang REGULER (1-6 hari ke depan)
         $query = "SELECT COUNT(*) as count FROM Jadwal_Tayang 
                   WHERE id_film = :id_film 
-                  AND tanggal_tayang > CURDATE()";
+                  AND tanggal_tayang > CURDATE()
+                  AND DATEDIFF(tanggal_tayang, CURDATE()) < 7";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_film', $id_film);
@@ -134,16 +149,31 @@ class Film extends BaseModel {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if($result['count'] > 0) {
-            return 'Akan Tayang';
+            return 'Akan Tayang'; // Reguler (1-6 hari)
+        }
+        
+        // Cek presale (7+ hari ke depan)
+        $query = "SELECT COUNT(*) as count FROM Jadwal_Tayang 
+                  WHERE id_film = :id_film 
+                  AND DATEDIFF(tanggal_tayang, CURDATE()) >= 7";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id_film', $id_film);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if($result['count'] > 0) {
+            return 'Pre-Sale'; // Presale (7+ hari)
         }
         
         return null;
     }
 
+    // PERBAIKAN: Cek presale dengan definisi yang benar (7+ hari)
     public function hasPresaleSchedule($id_film) {
         $query = "SELECT COUNT(*) as count FROM Jadwal_Tayang 
                   WHERE id_film = :id_film 
-                  AND DATEDIFF(tanggal_tayang, CURDATE()) > 7";
+                  AND DATEDIFF(tanggal_tayang, CURDATE()) >= 7";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_film', $id_film);
@@ -153,6 +183,7 @@ class Film extends BaseModel {
         return $result['count'] > 0;
     }
 
+    // Read film sedang tayang (hari ini)
     public function readSedangTayang() {
         $query = "SELECT 
                     f.id_film, 
@@ -168,7 +199,7 @@ class Film extends BaseModel {
                   LEFT JOIN Genre g ON f.id_genre = g.id_genre
                   INNER JOIN Jadwal_Tayang jt ON f.id_film = jt.id_film
                   WHERE CONCAT(jt.tanggal_tayang, ' ', jt.jam_selesai) >= NOW()
-                    AND jt.tanggal_tayang <= CURDATE()
+                    AND jt.tanggal_tayang = CURDATE()
                   GROUP BY f.id_film
                   ORDER BY f.tahun_rilis DESC";
         
@@ -177,6 +208,7 @@ class Film extends BaseModel {
         return $stmt;
     }
 
+    // PERBAIKAN: Read akan tayang REGULER (1-6 hari)
     public function readAkanTayang() {
         $query = "SELECT 
                     f.id_film, 
@@ -192,6 +224,31 @@ class Film extends BaseModel {
                   LEFT JOIN Genre g ON f.id_genre = g.id_genre
                   INNER JOIN Jadwal_Tayang jt ON f.id_film = jt.id_film
                   WHERE jt.tanggal_tayang > CURDATE()
+                    AND DATEDIFF(jt.tanggal_tayang, CURDATE()) < 7
+                  GROUP BY f.id_film
+                  ORDER BY f.tahun_rilis DESC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // TAMBAHAN: Read presale (7+ hari)
+    public function readPresale() {
+        $query = "SELECT 
+                    f.id_film, 
+                    f.judul_film, 
+                    f.tahun_rilis, 
+                    f.durasi_menit, 
+                    f.sipnosis, 
+                    f.rating, 
+                    f.poster_url, 
+                    f.id_genre, 
+                    g.nama_genre
+                  FROM Film f
+                  LEFT JOIN Genre g ON f.id_genre = g.id_genre
+                  INNER JOIN Jadwal_Tayang jt ON f.id_film = jt.id_film
+                  WHERE DATEDIFF(jt.tanggal_tayang, CURDATE()) >= 7
                   GROUP BY f.id_film
                   ORDER BY f.tahun_rilis DESC";
         
@@ -207,6 +264,9 @@ class Film extends BaseModel {
                 break;
             case 'sedang_tayang':
                 $stmt = $this->readSedangTayang();
+                break;
+            case 'presale':
+                $stmt = $this->readPresale();
                 break;
             default:
                 return 0;
