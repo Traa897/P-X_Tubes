@@ -74,7 +74,7 @@
     <?php else: ?>
         <div style="display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: thin;">
             <?php foreach($films as $film): ?>
-                <?php
+               <?php
                 // Cek status film
                 $today = date('Y-m-d');
                 $query = "SELECT MIN(tanggal_tayang) as nearest_date FROM Jadwal_Tayang WHERE id_film = :id_film AND tanggal_tayang >= :today";
@@ -91,13 +91,12 @@
                 if($result && $result['nearest_date']) {
                     $selisihHari = floor((strtotime($result['nearest_date']) - strtotime($today)) / 86400);
                     
-                    // Hanya tampilkan badge untuk PRE-SALE (lebih dari 7 hari)
-                    if($selisihHari > 7) {
+                    // PERBAIKAN: Tampilkan badge untuk PRE-SALE (lebih dari 1 hari)
+                    if($selisihHari > 1) {
                         $isPresale = true;
                         $statusBadge = 'PRE-SALE';
                         $statusColor = 'linear-gradient(135deg, #f59e0b, #d97706)';
                     }
-                    // Film yang tayang hari ini atau < 7 hari tidak ada badge
                 }
                 ?>
                 <div style="flex-shrink: 0; width: 180px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-8px)'" onmouseout="this.style.transform='translateY(0)'">

@@ -160,21 +160,34 @@ require_once 'views/layouts/header.php';
                         </div>
                     </div>
 
-                    <!-- Schedule Info -->
+                   <!-- Schedule Info -->
                     <div>
-                        <h3 style="margin: 0 0 10px 0; font-size: 22px; color: #032541;">
-                            🎬 <?php echo htmlspecialchars($jadwal['judul_film']); ?>
+                        <h3 style="margin: 0 0 10px 0; font-size: 22px; color: #032541; display: flex; align-items: center; gap: 8px;">
+                            <?php echo htmlspecialchars($jadwal['judul_film']); ?>
                         </h3>
-                        <p style="margin: 5px 0; color: #666; font-size: 16px;">
-                            🏢 <?php echo htmlspecialchars($jadwal['nama_bioskop']); ?> - <?php echo htmlspecialchars($jadwal['kota']); ?>
+                        <p style="margin: 5px 0; color: #666; font-size: 16px; display: flex; align-items: center; gap: 6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                            <?php echo htmlspecialchars($jadwal['nama_bioskop']); ?> - <?php echo htmlspecialchars($jadwal['kota']); ?>
                         </p>
                         <?php if(!empty($jadwal['nama_tayang'])): ?>
-                            <p style="margin: 5px 0; color: #01b4e4; font-weight: 600;">
-                                🎫 <?php echo htmlspecialchars($jadwal['nama_tayang']); ?>
+                            <p style="margin: 5px 0; color: #01b4e4; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 7h-3a2 2 0 0 1-2-2V2"/>
+                                    <rect x="3" y="2" width="14" height="20" rx="2"/>
+                                    <path d="M7 10h6M7 14h6M7 18h3"/>
+                                </svg>
+                                <?php echo htmlspecialchars($jadwal['nama_tayang']); ?>
                             </p>
                         <?php endif; ?>
-                        <p style="margin: 5px 0; color: #01b4e4; font-weight: 700; font-size: 18px;">
-                            💰 Rp <?php echo number_format($jadwal['harga_tiket'], 0, ',', '.'); ?>
+                        <p style="margin: 5px 0; color: #01b4e4; font-weight: 700; font-size: 18px; display: flex; align-items: center; gap: 6px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                            Rp <?php echo number_format($jadwal['harga_tiket'], 0, ',', '.'); ?>
                         </p>
                     </div>
 
@@ -183,7 +196,7 @@ require_once 'views/layouts/header.php';
                         <?php if(isset($_SESSION['user_id'])): ?>
                             <a href="index.php?module=transaksi&action=booking&id_jadwal=<?php echo $jadwal['id_tayang']; ?>" 
                                class="btn btn-primary" style="text-align: center; padding: 10px 20px;">
-                                🎫 Booking
+                                x`Booking
                             </a>
                         <?php endif; ?>
                         
