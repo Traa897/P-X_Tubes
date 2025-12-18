@@ -1,5 +1,5 @@
 <?php
-// controllers/AuthController.php - FIXED VERSION
+// controllers/AuthController.php - WITH DATE OF BIRTH VALIDATION
 require_once 'config/database.php';
 require_once 'models/User.php';
 require_once 'models/Admin.php';
@@ -99,11 +99,36 @@ class AuthController {
             $password = isset($_POST['password']) ? $_POST['password'] : '';
             $nama_lengkap = isset($_POST['nama_lengkap']) ? trim($_POST['nama_lengkap']) : '';
             $no_telpon = isset($_POST['no_telpon']) ? trim($_POST['no_telpon']) : '';
+            $tanggal_lahir = isset($_POST['tanggal_lahir']) ? $_POST['tanggal_lahir'] : null;
 
+            // VALIDASI BASIC
             if($username === '' || $email === '' || $password === '' || $nama_lengkap === '') {
                 $error = 'Semua field wajib diisi';
                 require_once 'views/auth/register.php';
                 return;
+            }
+
+            // VALIDASI TANGGAL LAHIR - TIDAK BOLEH MELEBIHI HARI INI
+            if(!empty($tanggal_lahir)) {
+                $today = date('Y-m-d');
+                $inputDate = $tanggal_lahir;
+                
+                if($inputDate > $today) {
+                    $error = 'Tanggal lahir tidak boleh melebihi hari ini!';
+                    require_once 'views/auth/register.php';
+                    return;
+                }
+                
+                // VALIDASI UMUR MINIMAL (Opsional - minimal 13 tahun)
+                $birthDate = new DateTime($tanggal_lahir);
+                $todayDate = new DateTime($today);
+                $age = $todayDate->diff($birthDate)->y;
+                
+                if($age < 13) {
+                    $error = 'Anda harus berusia minimal 13 tahun untuk mendaftar!';
+                    require_once 'views/auth/register.php';
+                    return;
+                }
             }
 
             if($this->user->usernameExists($username)) {
@@ -123,7 +148,7 @@ class AuthController {
             $this->user->password = $password;
             $this->user->nama_lengkap = $nama_lengkap;
             $this->user->no_telpon = $no_telpon;
-            $this->user->tanggal_lahir = isset($_POST['tanggal_lahir']) ? $_POST['tanggal_lahir'] : null;
+            $this->user->tanggal_lahir = $tanggal_lahir;
             $this->user->alamat = isset($_POST['alamat']) ? $_POST['alamat'] : null;
 
             if($this->user->create()) {
@@ -139,22 +164,18 @@ class AuthController {
         }
     }
 
-    // FIXED: Logout - Redirect ke halaman public film
+    // Logout
     public function logout() {
-        // Start session jika belum
         if(session_status() == PHP_SESSION_NONE) {
             session_start();
         }
         
-        // Simpan pesan sebelum destroy session
         $isAdmin = isset($_SESSION['admin_id']);
         
-        // Clear all session variables
         foreach (array_keys($_SESSION) as $key) {
             unset($_SESSION[$key]);
         }
         
-        // Destroy session cookie
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', time() - 42000,
@@ -163,19 +184,16 @@ class AuthController {
             );
         }
         
-        // Destroy session
         session_destroy();
         
-        // Start new session for flash message
         session_start();
         $_SESSION['flash'] = 'Anda telah logout';
         
-        // Redirect ke halaman public film
         header('Location: index.php?module=film');
         exit();
     }
     
-    // ADDED: Ganti Password untuk Admin
+    // Ganti Password untuk Admin
     public function gantiPasswordAdmin() {
         if(!isset($_SESSION['admin_id'])) {
             header('Location: index.php?module=auth&action=index');
@@ -187,7 +205,6 @@ class AuthController {
             $password_baru = $_POST['password_baru'] ?? '';
             $konfirmasi_password = $_POST['konfirmasi_password'] ?? '';
             
-            // Validasi
             if($password_baru !== $konfirmasi_password) {
                 $error = 'Password baru tidak cocok';
                 require_once 'views/admin/ganti_password.php';
@@ -200,7 +217,6 @@ class AuthController {
                 return;
             }
             
-            // Verifikasi password lama
             $query = "SELECT password FROM Admin WHERE id_admin = :id";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':id', $_SESSION['admin_id']);
@@ -218,7 +234,6 @@ class AuthController {
                 return;
             }
             
-            // Update password
             $password_hash = password_hash($password_baru, PASSWORD_DEFAULT);
             $query = "UPDATE Admin SET password = :password WHERE id_admin = :id";
             $stmt = $this->db->prepare($query);
@@ -238,7 +253,7 @@ class AuthController {
         }
     }
     
-    // ADDED: Ganti Password untuk User
+    // Ganti Password untuk User
     public function gantiPasswordUser() {
         if(!isset($_SESSION['user_id'])) {
             header('Location: index.php?module=auth&action=index');
@@ -250,7 +265,6 @@ class AuthController {
             $password_baru = $_POST['password_baru'] ?? '';
             $konfirmasi_password = $_POST['konfirmasi_password'] ?? '';
             
-            // Validasi
             if($password_baru !== $konfirmasi_password) {
                 $error = 'Password baru tidak cocok';
                 require_once 'views/user/ganti_password.php';
@@ -263,7 +277,6 @@ class AuthController {
                 return;
             }
             
-            // Verifikasi password lama
             $query = "SELECT password FROM User WHERE id_user = :id";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':id', $_SESSION['user_id']);
@@ -276,7 +289,6 @@ class AuthController {
                 return;
             }
             
-            // Update password
             $password_hash = password_hash($password_baru, PASSWORD_DEFAULT);
             $query = "UPDATE User SET password = :password WHERE id_user = :id";
             $stmt = $this->db->prepare($query);

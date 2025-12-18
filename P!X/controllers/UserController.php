@@ -1,4 +1,5 @@
 <?php
+// controllers/UserController.php - WITH DATE VALIDATION
 
 require_once 'config/database.php';
 require_once 'models/BaseModel.php';
@@ -17,7 +18,6 @@ class UserController {
         $this->transaksi = new Transaksi($this->db);
     }
 
-    // Dashboard User
     public function dashboard() {
         if(session_status() == PHP_SESSION_NONE) session_start();
         
@@ -29,14 +29,12 @@ class UserController {
         $this->user->id_user = $_SESSION['user_id'];
         $this->user->readOne();
         
-        // Get User Transaction History
         $stmt = $this->transaksi->readByUser($_SESSION['user_id']);
         $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         require_once 'views/user/dashboard.php';
     }
 
-    // Profile User
     public function profile() {
         if(session_status() == PHP_SESSION_NONE) session_start();
         
@@ -51,7 +49,6 @@ class UserController {
         require_once 'views/user/profile.php';
     }
 
-    // Update Profile
     public function updateProfile() {
         if(session_status() == PHP_SESSION_NONE) session_start();
         
@@ -68,14 +65,38 @@ class UserController {
         $this->user->tanggal_lahir = $_POST['tanggal_lahir'];
         $this->user->alamat = $_POST['alamat'];
 
-        // Validasi input kosong
+        // VALIDASI BASIC
         if(empty($this->user->username) || empty($this->user->email) || empty($this->user->nama_lengkap)) {
             $_SESSION['flash'] = 'Username, email, dan nama lengkap wajib diisi!';
             header("Location: index.php?module=user&action=profile");
             exit();
         }
 
-        // Check username & email uniqueness
+        // VALIDASI TANGGAL LAHIR
+        if(!empty($this->user->tanggal_lahir)) {
+            $today = date('Y-m-d');
+            $inputDate = $this->user->tanggal_lahir;
+            
+            // CEK TIDAK BOLEH MELEBIHI HARI INI
+            if($inputDate > $today) {
+                $_SESSION['flash'] = 'Tanggal lahir tidak boleh melebihi hari ini!';
+                header("Location: index.php?module=user&action=profile");
+                exit();
+            }
+            
+            // VALIDASI UMUR MINIMAL (Opsional - minimal 13 tahun)
+            $birthDate = new DateTime($this->user->tanggal_lahir);
+            $todayDate = new DateTime($today);
+            $age = $todayDate->diff($birthDate)->y;
+            
+            if($age < 13) {
+                $_SESSION['flash'] = 'Anda harus berusia minimal 13 tahun!';
+                header("Location: index.php?module=user&action=profile");
+                exit();
+            }
+        }
+
+        // Check uniqueness
         if($this->user->usernameExists($_POST['username'], $_SESSION['user_id'])) {
             $_SESSION['flash'] = 'Username sudah digunakan!';
             header("Location: index.php?module=user&action=profile");
@@ -92,7 +113,6 @@ class UserController {
             $_SESSION['user_name'] = $_POST['nama_lengkap'];
             $_SESSION['flash'] = 'Profile berhasil diupdate!';
             
-            // Auto redirect ke dashboard setelah 2 detik
             header("Location: index.php?module=user&action=dashboard");
             exit();
         } else {
@@ -101,7 +121,7 @@ class UserController {
             exit();
         }
     }
-    // Riwayat Transaksi
+
     public function riwayat() {
         if(session_status() == PHP_SESSION_NONE) session_start();
         
@@ -116,7 +136,6 @@ class UserController {
         require_once 'views/user/riwayat.php';
     }
 
-    // Detail Tiket
     public function detailTiket() {
         if(session_status() == PHP_SESSION_NONE) session_start();
         
@@ -128,7 +147,6 @@ class UserController {
         $this->transaksi->id_transaksi = $_GET['id'];
         $transaksi = $this->transaksi->readOne();
         
-        // Verify ownership
         if(!$transaksi || $transaksi['id_user'] != $_SESSION['user_id']) {
             header("Location: index.php?module=user&action=dashboard");
             exit();
@@ -139,10 +157,9 @@ class UserController {
         require_once 'views/user/detail_tiket.php';
     }
     
-    // Ganti Password - NEW METHOD
     public function gantiPassword() {
-        // Redirect ke AuthController
         header('Location: index.php?module=auth&action=gantiPasswordUser');
         exit();
     }
 }
+?>
