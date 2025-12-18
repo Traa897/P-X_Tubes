@@ -1,0 +1,3 @@
+- Validasi pada konfirmasi pesanan sudah benar dengan diberikan function proses pembayaran 
+- yang belum yaitu validasi pada tanggal lahir yang bisa di isi meleewati tanggal sekarang 
+- tambahan perbaikan pada Authcontroller

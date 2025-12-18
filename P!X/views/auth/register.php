@@ -34,11 +34,31 @@
                 <input type="tel" name="no_telpon" placeholder="08xx-xxxx-xxxx">
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Tanggal Lahir</label>
-                    <input type="date" name="tanggal_lahir">
-                </div>
+           <div class="form-group">
+            <label>Tanggal Lahir</label>
+            <input type="date" name="tanggal_lahir" id="tanggal_lahir" max="<?php echo date('Y-m-d'); ?>">
+            <small style="color: #666; display: block; margin-top: 5px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                Tanggal lahir tidak boleh melebihi hari ini
+            </small>
+        </div>
+
+        <script>
+        document.getElementById('tanggal_lahir').addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if(selectedDate > today) {
+                alert('❌ Tanggal lahir tidak boleh melebihi hari ini!');
+                this.value = '';
+            }
+        });
+        </script>
 
                 <div class="form-group">
                     <label>Alamat</label>

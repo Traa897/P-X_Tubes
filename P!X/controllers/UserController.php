@@ -61,12 +61,19 @@ class UserController {
         }
 
         $this->user->id_user = $_SESSION['user_id'];
-        $this->user->username = $_POST['username'];
-        $this->user->email = $_POST['email'];
-        $this->user->nama_lengkap = $_POST['nama_lengkap'];
-        $this->user->no_telpon = $_POST['no_telpon'];
+        $this->user->username = trim($_POST['username']);
+        $this->user->email = trim($_POST['email']);
+        $this->user->nama_lengkap = trim($_POST['nama_lengkap']);
+        $this->user->no_telpon = trim($_POST['no_telpon']);
         $this->user->tanggal_lahir = $_POST['tanggal_lahir'];
         $this->user->alamat = $_POST['alamat'];
+
+        // Validasi input kosong
+        if(empty($this->user->username) || empty($this->user->email) || empty($this->user->nama_lengkap)) {
+            $_SESSION['flash'] = 'Username, email, dan nama lengkap wajib diisi!';
+            header("Location: index.php?module=user&action=profile");
+            exit();
+        }
 
         // Check username & email uniqueness
         if($this->user->usernameExists($_POST['username'], $_SESSION['user_id'])) {
@@ -84,14 +91,16 @@ class UserController {
         if($this->user->update()) {
             $_SESSION['user_name'] = $_POST['nama_lengkap'];
             $_SESSION['flash'] = 'Profile berhasil diupdate!';
+            
+            // Auto redirect ke dashboard setelah 2 detik
+            header("Location: index.php?module=user&action=dashboard");
+            exit();
         } else {
             $_SESSION['flash'] = 'Gagal update profile!';
+            header("Location: index.php?module=user&action=profile");
+            exit();
         }
-
-        header("Location: index.php?module=user&action=profile");
-        exit();
     }
-
     // Riwayat Transaksi
     public function riwayat() {
         if(session_status() == PHP_SESSION_NONE) session_start();

@@ -102,6 +102,45 @@ class TransaksiController {
         require_once 'views/transaksi/booking.php';
     }
 
+    // Method baru - tambahkan setelah method booking()
+    public function konfirmasiPembayaran() {
+        if(session_status() == PHP_SESSION_NONE) session_start();
+        
+        if(!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] != 'POST') {
+            header("Location: index.php?module=film");
+            exit();
+        }
+
+        if(!isset($_POST['id_jadwal']) || !isset($_POST['jumlah_tiket']) || !isset($_POST['metode_pembayaran'])) {
+            $_SESSION['flash'] = 'Data tidak lengkap!';
+            header("Location: index.php?module=film");
+            exit();
+        }
+
+        $id_jadwal = $_POST['id_jadwal'];
+        
+        // Get Complete Jadwal Info
+        $query = "SELECT jt.*, f.judul_film, f.poster_url, b.nama_bioskop, b.kota, b.alamat_bioskop
+                FROM Jadwal_Tayang jt
+                LEFT JOIN Film f ON jt.id_film = f.id_film
+                LEFT JOIN Bioskop b ON jt.id_bioskop = b.id_bioskop
+                WHERE jt.id_tayang = :id_jadwal";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id_jadwal', $id_jadwal);
+        $stmt->execute();
+        $jadwalData = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if(!$jadwalData) {
+            $_SESSION['flash'] = 'Jadwal tidak ditemukan!';
+            header("Location: index.php?module=film");
+            exit();
+        }
+
+        $jadwal = (object) $jadwalData;
+        
+        require_once 'views/transaksi/konfirmasi_pembayaran.php';
+    }
     // Process Booking dengan Random Seat
     public function prosesBooking() {
         if(session_status() == PHP_SESSION_NONE) session_start();
@@ -137,6 +176,14 @@ class TransaksiController {
             }
             
             $kursiTerpilih[] = $kursi;
+        }
+
+        // Validasi metode pembayaran
+        $valid_methods = ['transfer', 'e-wallet', 'e-money', 'm-banking', 'kartu_kredit'];
+        if(!in_array($metode_pembayaran, $valid_methods)) {
+            $_SESSION['flash'] = 'Metode pembayaran tidak valid!';
+            header("Location: index.php?module=transaksi&action=booking&id_jadwal=" . $id_jadwal);
+            exit();
         }
 
         // Create Transaksi
