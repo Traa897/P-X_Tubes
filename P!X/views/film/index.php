@@ -3,7 +3,7 @@ require_once 'views/layouts/header.php'; ?>
 
 <div class="hero-section">
     <div class="hero-content">
-        <h1>Daftar Film</h1>
+        <h1>P!X Selalu ada...</h1>
         <p>Selamat datang, Jangan Lupa Nonton </p>
         
         <form method="GET" action="index.php" class="hero-search">
